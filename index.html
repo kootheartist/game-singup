@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>게임 소식 가장 먼저 받기</title>
+
+<!-- Google tag (gtag.js) : GA_MEASUREMENT_ID 를 발급받은 실제 ID로 바꿔주세요 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'GA_MEASUREMENT_ID');
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --cream:#F7F3E8;
+    --forest:#33422F;
+    --sage:#8FAE8B;
+    --sage-deep:#5E7A5A;
+    --coral:#E8927C;
+    --coral-deep:#D97757; /* used sparingly, not as the whole palette */
+    --card:#FFFFFF;
+    --mint-line:#D9E5D3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:var(--cream);
+    color:var(--forest);
+    font-family:'Noto Sans KR', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+  }
+  .wrap{
+    max-width:480px;
+    width:100%;
+  }
+  .badge{
+    display:inline-block;
+    font-size:13px;
+    color:var(--sage-deep);
+    background:#EAF2E7;
+    border:1px solid var(--mint-line);
+    padding:5px 12px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  h1{
+    font-family:'Do Hyeon', sans-serif;
+    font-size:34px;
+    line-height:1.35;
+    margin:0 0 14px;
+    color:var(--forest);
+  }
+  p.lede{
+    font-size:15.5px;
+    line-height:1.65;
+    color:#54614F;
+    margin:0 0 28px;
+    max-width:38ch;
+  }
+  .critter{
+    width:64px;
+    height:64px;
+    margin-bottom:16px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--mint-line);
+    border-radius:20px;
+    padding:28px 24px;
+    box-shadow:0 6px 24px rgba(51,66,47,0.06);
+  }
+  label.field-label{
+    display:block;
+    font-size:13.5px;
+    font-weight:500;
+    color:var(--forest);
+    margin-bottom:6px;
+  }
+  input[type=email]{
+    width:100%;
+    padding:13px 14px;
+    border-radius:12px;
+    border:1.5px solid var(--mint-line);
+    font-size:15px;
+    font-family:inherit;
+    margin-bottom:18px;
+    outline:none;
+    transition:border-color .15s ease;
+  }
+  input[type=email]:focus{
+    border-color:var(--sage);
+  }
+  .consent-row{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    margin-bottom:12px;
+    font-size:13.5px;
+    line-height:1.5;
+    color:#54614F;
+  }
+  .consent-row input[type=checkbox]{
+    margin-top:3px;
+    width:16px;
+    height:16px;
+    accent-color:var(--sage-deep);
+    flex-shrink:0;
+  }
+  .consent-row .tag{
+    font-weight:700;
+    color:var(--sage-deep);
+    margin-right:2px;
+  }
+  details{
+    margin:2px 0 18px 26px;
+  }
+  details summary{
+    font-size:12.5px;
+    color:#8A968A;
+    cursor:pointer;
+  }
+  details .policy-text{
+    font-size:12px;
+    color:#8A968A;
+    line-height:1.6;
+    margin-top:8px;
+  }
+  button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:var(--coral);
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    font-family:'Noto Sans KR', sans-serif;
+    cursor:pointer;
+    transition:background .15s ease, transform .1s ease;
+  }
+  button:hover{ background:var(--coral-deep); }
+  button:active{ transform:scale(0.98); }
+  button:disabled{ background:#CBB7AF; cursor:default; }
+
+  .msg{
+    margin-top:14px;
+    font-size:13.5px;
+    text-align:center;
+  }
+  .msg.ok{ color:var(--sage-deep); }
+  .msg.err{ color:#B84B3C; }
+
+  .success{
+    text-align:center;
+    padding:12px 0 6px;
+  }
+  .success h2{
+    font-family:'Do Hyeon', sans-serif;
+    font-size:22px;
+    margin:14px 0 8px;
+    color:var(--forest);
+  }
+  .success p{
+    font-size:14.5px;
+    color:#54614F;
+    line-height:1.6;
+    margin:0;
+  }
+  .hidden{ display:none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="badge">제작 중 · 얼리 소식</span>
+  <svg class="critter" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <ellipse cx="32" cy="40" rx="20" ry="16" fill="#C9DCC5"/>
+    <circle cx="22" cy="20" r="7" fill="#C9DCC5"/>
+    <circle cx="42" cy="20" r="7" fill="#C9DCC5"/>
+    <circle cx="24" cy="38" r="3" fill="#33422F"/>
+    <circle cx="40" cy="38" r="3" fill="#33422F"/>
+    <path d="M27 46 Q32 50 37 46" stroke="#33422F" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>
+  <h1>지친 하루, 잠깐 쉬어갈 곳을<br/>가장 먼저 알려드릴게요</h1>
+  <p class="lede">이 게임은 적을 무찌르는 대신 달래서 재우는 캐주얼 힐링 게임이에요. 출시 소식을 가장 먼저 받고 싶다면 이메일만 남겨주세요.</p>
+
+  <div class="card">
+    <form id="signup-form">
+      <label class="field-label" for="email">이메일</label>
+      <input type="email" id="email" name="email" placeholder="you@email.com" required />
+
+      <div class="consent-row">
+        <input type="checkbox" id="consent-privacy" required />
+        <label for="consent-privacy"><span class="tag">[필수]</span>개인정보 수집·이용에 동의합니다</label>
+      </div>
+      <details>
+        <summary>수집 항목 및 이용 목적 보기</summary>
+        <div class="policy-text">
+          수집 항목: 이메일 주소 · 유입 경로(UTM) 정보<br/>
+          이용 목적: 게임 출시 소식 및 업데이트 안내<br/>
+          보유 기간: 동의 철회 또는 게임 출시 후 별도 요청 시까지<br/>
+          위 동의를 거부할 권리가 있으며, 거부 시 신청이 제한됩니다.
+        </div>
+      </details>
+
+      <div class="consent-row">
+        <input type="checkbox" id="consent-marketing" />
+        <label for="consent-marketing"><span class="tag">[선택]</span>이벤트·혜택 등 마케팅 소식도 받아볼래요</label>
+      </div>
+
+      <button type="submit" id="submit-btn">소식 받아보기</button>
+      <div id="form-msg" class="msg hidden"></div>
+    </form>
+
+    <div id="success" class="success hidden">
+      <svg width="40" height="40" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" fill="#EAF2E7"/>
+        <path d="M20 33 L28 41 L44 24" stroke="#5E7A5A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
+      <h2>등록 완료!</h2>
+      <p>게임이 세상에 나올 준비가 되면<br/>가장 먼저 소식을 보내드릴게요.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function getParam(name){
+    return new URLSearchParams(window.location.search).get(name) || '';
+  }
+
+  const form = document.getElementById('signup-form');
+  const submitBtn = document.getElementById('submit-btn');
+  const msgEl = document.getElementById('form-msg');
+
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    msgEl.className = 'msg hidden';
+
+    const email = document.getElementById('email').value.trim();
+    const consentPrivacy = document.getElementById('consent-privacy').checked;
+    const consentMarketing = document.getElementById('consent-marketing').checked;
+
+    if(!consentPrivacy){
+      msgEl.textContent = '개인정보 수집·이용 동의는 필수예요.';
+      msgEl.className = 'msg err';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = '등록 중...';
+
+    const payload = {
+      email,
+      consent_privacy: consentPrivacy,
+      consent_marketing: consentMarketing,
+      utm_source: getParam('utm_source'),
+      utm_medium: getParam('utm_medium'),
+      utm_campaign: getParam('utm_campaign'),
+      referrer: document.referrer || ''
+    };
+
+    try{
+      const res = await fetch('/api/signup', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+
+      if(!res.ok){
+        throw new Error(data.error || '알 수 없는 오류가 발생했어요.');
+      }
+
+      if (typeof gtag === 'function') {
+        gtag('event', 'sign_up', {
+          method: 'lunaby_landing',
+          utm_source: payload.utm_source,
+          utm_medium: payload.utm_medium,
+          utm_campaign: payload.utm_campaign
+        });
+      }
+
+      form.classList.add('hidden');
+      document.getElementById('success').classList.remove('hidden');
+    }catch(err){
+      msgEl.textContent = err.message || '등록에 실패했어요. 잠시 후 다시 시도해주세요.';
+      msgEl.className = 'msg err';
+      submitBtn.disabled = false;
+      submitBtn.textContent = '소식 받아보기';
+    }
+  });
+</script>
+</body>
+</html>

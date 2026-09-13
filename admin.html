@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>게임 소식 어드민</title>
+<meta name="robots" content="noindex, nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F7F3E8;
+    --forest:#33422F;
+    --sage:#8FAE8B;
+    --sage-deep:#5E7A5A;
+    --coral:#E8927C;
+    --card:#FFFFFF;
+    --mint-line:#D9E5D3;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--forest);
+    font-family:'Noto Sans KR', sans-serif;
+    padding:28px 16px 80px;
+  }
+  .wrap{ max-width:840px; margin:0 auto; }
+  h1{
+    font-family:'Do Hyeon', sans-serif;
+    font-size:26px;
+    margin:0 0 22px;
+  }
+  h2{
+    font-size:16px;
+    margin:0 0 12px;
+    color:var(--forest);
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--mint-line);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:18px;
+  }
+  .row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .row > div{ flex:1; min-width:140px; }
+  label{ display:block; font-size:12.5px; margin-bottom:5px; color:#54614F; }
+  input[type=text], input[type=password]{
+    width:100%;
+    padding:10px 11px;
+    border-radius:10px;
+    border:1.5px solid var(--mint-line);
+    font-size:14px;
+    font-family:inherit;
+    outline:none;
+  }
+  button{
+    padding:10px 16px;
+    border:none;
+    border-radius:10px;
+    background:var(--coral);
+    color:#fff;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    font-family:inherit;
+  }
+  button.secondary{
+    background:#EAF2E7;
+    color:var(--sage-deep);
+  }
+  .stat-grid{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .stat{
+    background:#EAF2E7;
+    border-radius:12px;
+    padding:14px 16px;
+    min-width:120px;
+  }
+  .stat .num{ font-family:'Do Hyeon', sans-serif; font-size:26px; }
+  .stat .label{ font-size:12.5px; color:#54614F; }
+  table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+  }
+  th, td{
+    text-align:left;
+    padding:8px 6px;
+    border-bottom:1px solid var(--mint-line);
+  }
+  th{ color:#54614F; font-weight:500; }
+  .link-out{
+    word-break:break-all;
+    font-size:13px;
+    background:#F7F3E8;
+    border:1px solid var(--mint-line);
+    border-radius:10px;
+    padding:10px 12px;
+    margin-top:10px;
+  }
+  .hidden{ display:none; }
+  .muted{ color:#8A968A; font-size:12.5px; }
+  #login-card{ max-width:340px; margin:80px auto; }
+</style>
+</head>
+<body>
+
+<div id="login-card" class="card">
+  <h2>어드민 로그인</h2>
+  <label for="pw">비밀번호</label>
+  <input type="password" id="pw" placeholder="••••••••" />
+  <div style="height:10px"></div>
+  <button id="login-btn" style="width:100%">들어가기</button>
+  <div id="login-msg" class="muted" style="margin-top:8px"></div>
+</div>
+
+<div id="dashboard" class="wrap hidden">
+  <h1>게임 소식 어드민</h1>
+
+  <div class="card">
+    <h2>UTM 빌더</h2>
+    <div class="row">
+      <div>
+        <label>기본 URL</label>
+        <input type="text" id="utm-base" placeholder="https://lunaby.vercel.app" />
+      </div>
+      <div>
+        <label>source (예: threads)</label>
+        <input type="text" id="utm-source" placeholder="threads" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div>
+        <label>medium (예: social)</label>
+        <input type="text" id="utm-medium" placeholder="social" />
+      </div>
+      <div>
+        <label>campaign (예: 8월소식)</label>
+        <input type="text" id="utm-campaign" placeholder="beta_notice" />
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px">
+      <div>
+        <label>메모 (어디에 뿌릴 링크인지)</label>
+        <input type="text" id="utm-memo" placeholder="스레드 첫 게시물" />
+      </div>
+    </div>
+    <div style="height:12px"></div>
+    <button id="build-btn">링크 만들기</button>
+    <button id="shorten-btn" class="secondary" style="margin-left:8px">숏튼 만들기</button>
+
+    <div id="built-link" class="link-out hidden"></div>
+    <div id="short-link" class="link-out hidden"></div>
+
+    <h2 style="margin-top:20px">만든 링크 기록</h2>
+    <table id="history-table">
+      <thead><tr><th>메모</th><th>링크</th><th>만든 시각</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="muted" id="history-empty">아직 만든 링크가 없어요.</p>
+  </div>
+
+  <div class="card">
+    <h2>성과 대시보드</h2>
+    <div class="stat-grid" id="stat-grid"></div>
+  </div>
+
+  <div class="card">
+    <h2>신청 명단</h2>
+    <table id="signup-table">
+      <thead><tr><th>이메일</th><th>출처</th><th>매체</th><th>캠페인</th><th>마케팅 동의</th><th>신청 시각</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  let PW = '';
+
+  document.getElementById('login-btn').addEventListener('click', async () => {
+    const pw = document.getElementById('pw').value;
+    const msg = document.getElementById('login-msg');
+    msg.textContent = '확인 중...';
+    try {
+      const res = await fetch('/api/admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || '로그인 실패');
+      PW = pw;
+      sessionStorage.setItem('lunaby_admin_pw', pw);
+      document.getElementById('login-card').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      renderDashboard(data);
+    } catch (err) {
+      msg.textContent = err.message;
+    }
+  });
+
+  // 세션 내 재방문 시 자동 로그인
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = sessionStorage.getItem('lunaby_admin_pw');
+    if (saved) {
+      document.getElementById('pw').value = saved;
+      document.getElementById('login-btn').click();
+    }
+    renderHistory();
+  });
+
+  function renderDashboard(data) {
+    const statGrid = document.getElementById('stat-grid');
+    statGrid.innerHTML = '';
+    const totalStat = document.createElement('div');
+    totalStat.className = 'stat';
+    totalStat.innerHTML = `<div class="num">${data.total}</div><div class="label">총 신청</div>`;
+    statGrid.appendChild(totalStat);
+
+    Object.entries(data.byChannel).sort((a,b)=>b[1]-a[1]).forEach(([source, count]) => {
+      const el = document.createElement('div');
+      el.className = 'stat';
+      el.innerHTML = `<div class="num">${count}</div><div class="label">${source}</div>`;
+      statGrid.appendChild(el);
+    });
+
+    const tbody = document.querySelector('#signup-table tbody');
+    tbody.innerHTML = '';
+    data.rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${r.email}</td>
+        <td>${r.utm_source || '-'}</td>
+        <td>${r.utm_medium || '-'}</td>
+        <td>${r.utm_campaign || '-'}</td>
+        <td>${r.consent_marketing ? 'O' : 'X'}</td>
+        <td>${new Date(r.created_at).toLocaleString('ko-KR')}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ---- UTM 빌더 ----
+  let lastBuiltUrl = '';
+
+  document.getElementById('build-btn').addEventListener('click', () => {
+    const base = document.getElementById('utm-base').value.trim();
+    const source = document.getElementById('utm-source').value.trim();
+    const medium = document.getElementById('utm-medium').value.trim();
+    const campaign = document.getElementById('utm-campaign').value.trim();
+
+    if (!base) { alert('기본 URL을 입력해주세요.'); return; }
+
+    const url = new URL(base);
+    if (source) url.searchParams.set('utm_source', source);
+    if (medium) url.searchParams.set('utm_medium', medium);
+    if (campaign) url.searchParams.set('utm_campaign', campaign);
+
+    lastBuiltUrl = url.toString();
+    const out = document.getElementById('built-link');
+    out.textContent = lastBuiltUrl;
+    out.classList.remove('hidden');
+    document.getElementById('short-link').classList.add('hidden');
+  });
+
+  document.getElementById('shorten-btn').addEventListener('click', async () => {
+    if (!lastBuiltUrl) { alert('먼저 링크를 만들어주세요.'); return; }
+    const out = document.getElementById('short-link');
+    out.textContent = '단축 중...';
+    out.classList.remove('hidden');
+    try {
+      const res = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(lastBuiltUrl));
+      const shortUrl = await res.text();
+      out.textContent = shortUrl;
+      saveHistory(shortUrl);
+    } catch (err) {
+      out.textContent = '단축 실패 — 원본 링크를 사용해주세요.';
+      saveHistory(lastBuiltUrl);
+    }
+  });
+
+  function saveHistory(link) {
+    const memo = document.getElementById('utm-memo').value.trim() || '(메모 없음)';
+    const history = JSON.parse(localStorage.getItem('lunaby_link_history') || '[]');
+    history.unshift({ memo, link, time: new Date().toISOString() });
+    localStorage.setItem('lunaby_link_history', JSON.stringify(history));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const history = JSON.parse(localStorage.getItem('lunaby_link_history') || '[]');
+    const tbody = document.querySelector('#history-table tbody');
+    const empty = document.getElementById('history-empty');
+    tbody.innerHTML = '';
+    if (history.length === 0) { empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    history.forEach(h => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${h.memo}</td><td>${h.link}</td><td>${new Date(h.time).toLocaleString('ko-KR')}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+</script>
+</body>
+</html>
